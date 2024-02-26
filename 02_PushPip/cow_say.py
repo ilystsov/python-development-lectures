@@ -11,3 +11,4 @@ parser.add_argument("-T", help="The cow's tongue.", default="  ")
 parser.add_argument(
     "-n", help="Wrap text. By default, text is wrapped.", action="store_false"
 )
+parser.add_argument("-W", help="Maximum width of the text.", type=int, default=40)
