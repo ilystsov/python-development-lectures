@@ -12,3 +12,9 @@ parser.add_argument(
     "-n", help="Wrap text. By default, text is wrapped.", action="store_false"
 )
 parser.add_argument("-W", help="Maximum width of the text.", type=int, default=40)
+presets = ["b", "d", "g", "p", "s", "t", "w", "y"]
+group = parser.add_mutually_exclusive_group()
+for preset in presets:
+    group.add_argument(
+        f"-{preset}", help=f"Use the {preset} character preset.", action="store_true"
+    )
