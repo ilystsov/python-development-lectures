@@ -5,4 +5,4 @@ parser = argparse.ArgumentParser(
     description="Python version of the classic cowsay program."
 )
 parser.add_argument("text", type=str, help="The message the cow will say.", nargs="?")
-
+parser.add_argument("-e", help="The cow's eyes.", default="oo")
