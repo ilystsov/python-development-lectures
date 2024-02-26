@@ -22,4 +22,19 @@ parser.add_argument("-l", help="List all cow characters.", action="store_true")
 args = parser.parse_args()
 if args.l:
     print(sorted(list_cows()))
-
+else:
+    if any([getattr(args, preset) for preset in presets]):
+        for preset in presets:
+            if getattr(args, preset):
+                args.f = preset
+                break
+    print(
+        cowsay(
+            message=args.text,
+            cow=args.f,
+            eyes=args.e,
+            tongue=args.T,
+            width=args.W,
+            wrap_text=args.n,
+        )
+    )
