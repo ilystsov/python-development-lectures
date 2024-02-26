@@ -18,3 +18,8 @@ for preset in presets:
     group.add_argument(
         f"-{preset}", help=f"Use the {preset} character preset.", action="store_true"
     )
+parser.add_argument("-l", help="List all cow characters.", action="store_true")
+args = parser.parse_args()
+if args.l:
+    print(sorted(list_cows()))
+
