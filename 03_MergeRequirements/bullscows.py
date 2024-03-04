@@ -1,3 +1,4 @@
+import random
 import cowsay
 from collections import Counter
 
@@ -19,6 +20,18 @@ def bullscows(guess: str, secret: str) -> (int, int):
             secret_letters_counter[letter] -= 1
             cows += 1
     return bulls, cows
+
+
+def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
+    secret = random.choice(words)
+    guess = None
+    attempts_number = 0
+    while guess != secret:
+        attempts_number += 1
+        guess = ask("Введите слово: ", words)
+        bulls, cows = bullscows(guess, secret)
+        inform("Быки: {}, Коровы: {}", bulls, cows)
+    return attempts_number
 
 
 def ask(prompt: str, valid: list[str] = None) -> str:
