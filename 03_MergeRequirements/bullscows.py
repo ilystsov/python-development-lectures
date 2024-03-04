@@ -4,9 +4,26 @@ import argparse
 import cowsay
 from collections import Counter
 import requests
+import io
+
 
 word_length = 5
 
+my_cow = cowsay.read_dot_cow(io.StringIO('''
+$the_cow = <<EOC;
+         $thoughts
+          $thoughts         ( )   ( )
+           $thoughts         )     (
+            $thoughts       ( )   ( )
+                   ^^^^^^^^^^^
+                   \\  ^   ^  /
+                    \\(0---0)/
+                     (  V  )
+                      \\|_|/
+                       \\_/
+EOC
+
+'''))
 
 def bullscows(guess: str, secret: str) -> (int, int):
     bulls, cows = 0, 0
@@ -33,7 +50,6 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
         print(f"В словаре нет слов длиной {word_length} символов.")
         sys.exit(1)
     secret = random.choice(filtered_words)
-
     guess = None
     attempts_number = 0
     while guess != secret:
@@ -46,7 +62,7 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
 
 def ask(prompt: str, valid: list[str] = None) -> str:
     cow = random.choice(cowsay.list_cows())
-    print(cowsay.cowsay(prompt, cow=cow))
+    print(cowsay.cowsay(prompt, cowfile=my_cow))
     guess = input()
     while valid and (guess not in valid) or (len(guess) != word_length):
         guess = input(prompt)
