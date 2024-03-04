@@ -7,6 +7,7 @@ import requests
 
 word_length = 5
 
+
 def bullscows(guess: str, secret: str) -> (int, int):
     bulls, cows = 0, 0
     for i in range(len(secret)):
@@ -55,15 +56,17 @@ def inform(format_string: str, bulls: int, cows: int) -> None:
     print(format_string.format(bulls, cows))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Python version of the classic Bulls and Cows game."
     )
     parser.add_argument("dictionary", type=str, help="File name or URL")
-    parser.add_argument("length", type=int, help="The length of words", default=5, nargs='?')
+    parser.add_argument(
+        "length", type=int, help="The length of words", default=5, nargs="?"
+    )
     args = parser.parse_args()
     word_length = args.length
-    if args.dictionary.startswith(('http://', 'https://')):
+    if args.dictionary.startswith(("http://", "https://")):
         try:
             response = requests.get(args.dictionary)
             response.raise_for_status()
@@ -73,11 +76,11 @@ if __name__ == '__main__':
             sys.exit(1)
     else:
         try:
-            with open(args.dictionary, 'r') as file:
+            with open(args.dictionary, "r") as file:
                 word_list = file.read().split()
         except Exception as e:
             print(f"Ошибка при открытии файла: {e}")
             sys.exit(1)
 
     attempts_number = gameplay(ask, inform, word_list)
-    print('Суммарное число попыток:', attempts_number)
+    print("Суммарное число попыток:", attempts_number)
