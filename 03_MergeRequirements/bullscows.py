@@ -19,3 +19,10 @@ def bullscows(guess: str, secret: str) -> (int, int):
             secret_letters_counter[letter] -= 1
             cows += 1
     return bulls, cows
+
+
+def ask(prompt: str, valid: list[str] = None) -> str:
+    guess = input(prompt)
+    while valid and guess not in valid:
+        guess = input(prompt)
+    return guess
