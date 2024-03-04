@@ -34,7 +34,6 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
         sys.exit(1)
     secret = random.choice(filtered_words)
 
-    print(secret)
     guess = None
     attempts_number = 0
     while guess != secret:
@@ -46,14 +45,17 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
 
 
 def ask(prompt: str, valid: list[str] = None) -> str:
-    guess = input(prompt)
+    cow = random.choice(cowsay.list_cows())
+    print(cowsay.cowsay(prompt, cow=cow))
+    guess = input()
     while valid and (guess not in valid) or (len(guess) != word_length):
         guess = input(prompt)
     return guess
 
 
 def inform(format_string: str, bulls: int, cows: int) -> None:
-    print(format_string.format(bulls, cows))
+    cow = random.choice(cowsay.list_cows())
+    print(cowsay.cowsay(format_string.format(bulls, cows), cow=cow))
 
 
 if __name__ == "__main__":
