@@ -10,7 +10,6 @@ class CowsayShell(cmd.Cmd):
 
     def do_list_cows(self, arg):
         """List all cow characters.\nUSAGE: list_cows [path/to/file]"""
-
         args = shlex.split(arg)
         if len(args) == 1:
             print(cowsay.list_cows(arg if arg else cowsay.COW_PEN))
@@ -32,6 +31,11 @@ class CowsayShell(cmd.Cmd):
         if len(args) == 3:
             wrap_text = bool(args[2])
         print(cowsay.make_bubble(text=text, width=width, wrap_text=wrap_text))
+
+    def complete_make_bubble(self, text, line, begidx, endidx):
+        words = (line[:endidx] + ".").split()
+        if len(words) == 4:
+            return [hint for hint in ['True', 'False'] if hint.startswith(text)]
 
     def cow_act(self, action, arg):
         args = shlex.split(arg)
