@@ -58,6 +58,17 @@ class CowsayShell(cmd.Cmd):
         """Print cow saying message.\nUSAGE: cowsay message [cow [eyes [tongue]]]"""
         self.cow_act(cowsay.cowsay, arg)
 
+    def complete_cowsay(self, text, line, begidx, endidx):
+        words = (line[:endidx] + ".").split()
+        hints = []
+        if len(words) == 3:
+            hints = cowsay.list_cows()
+        if len(words) == 4:
+            hints = ['--', 'QQ', '00', 'oo', '><']
+        if len(words) == 5:
+            hints = ['|', 'v', 'U', '0']
+        return [hint for hint in hints if hint.startswith(text)]
+
     def do_cowthink(self, arg):
         """Print cow thinking message\nUSAGE: cowthink message [cow [eyes [tongue]]]"""
         self.cow_act(cowsay.cowthink, arg)
