@@ -1,5 +1,4 @@
 import shlex
-
 import cowsay
 import cmd
 
@@ -15,7 +14,6 @@ class CowsayShell(cmd.Cmd):
             print(cowsay.list_cows(arg if arg else cowsay.COW_PEN))
         else:
             print('Invalid arguments!')
-            return
 
     def do_make_bubble(self, arg):
         """Wrap the text inside the bubble.\nUSAGE: make_bubble text [width [wrap_text]]"""
@@ -54,11 +52,7 @@ class CowsayShell(cmd.Cmd):
             tongue = args[3]
         print(action(message=message, cow=cow, eyes=eyes, tongue=tongue))
 
-    def do_cowsay(self, arg):
-        """Print cow saying message.\nUSAGE: cowsay message [cow [eyes [tongue]]]"""
-        self.cow_act(cowsay.cowsay, arg)
-
-    def complete_cowsay(self, text, line, begidx, endidx):
+    def cow_act_completion(self, text, line, begidx, endidx):
         words = (line[:endidx] + ".").split()
         hints = []
         if len(words) == 3:
@@ -69,9 +63,19 @@ class CowsayShell(cmd.Cmd):
             hints = ['|', 'v', 'U', '0']
         return [hint for hint in hints if hint.startswith(text)]
 
+    def do_cowsay(self, arg):
+        """Print cow saying message.\nUSAGE: cowsay message [cow [eyes [tongue]]]"""
+        self.cow_act(cowsay.cowsay, arg)
+
+    def complete_cowsay(self, text, line, begidx, endidx):
+        return self.cow_act_completion(text, line, begidx, endidx)
+
     def do_cowthink(self, arg):
         """Print cow thinking message\nUSAGE: cowthink message [cow [eyes [tongue]]]"""
         self.cow_act(cowsay.cowthink, arg)
+
+    def complete_cowthink(self, text, line, begidx, endidx):
+        return self.cow_act_completion(text, line, begidx, endidx)
 
 if __name__ == '__main__':
     CowsayShell().cmdloop()
