@@ -33,8 +33,7 @@ class CowsayShell(cmd.Cmd):
             wrap_text = bool(args[2])
         print(cowsay.make_bubble(text=text, width=width, wrap_text=wrap_text))
 
-    def do_cowsay(self, arg):
-        """Print cow saying message.\nUSAGE: cowsay message [cow [eyes [tongue]]]"""
+    def cow_act(self, action, arg):
         args = shlex.split(arg)
         if len(args) == 0 or len(args) >= 5:
             print('Invalid arguments!')
@@ -49,8 +48,15 @@ class CowsayShell(cmd.Cmd):
             eyes = args[2]
         if len(args) >= 4:
             tongue = args[3]
-        print(cowsay.cowsay(message=message, cow=cow, eyes=eyes, tongue=tongue))
+        print(action(message=message, cow=cow, eyes=eyes, tongue=tongue))
 
+    def do_cowsay(self, arg):
+        """Print cow saying message.\nUSAGE: cowsay message [cow [eyes [tongue]]]"""
+        self.cow_act(cowsay.cowsay, arg)
+
+    def do_cowthink(self, arg):
+        """Print cow thinking message\nUSAGE: cowthink message [cow [eyes [tongue]]]"""
+        self.cow_act(cowsay.cowthink, arg)
 
 if __name__ == '__main__':
     CowsayShell().cmdloop()
