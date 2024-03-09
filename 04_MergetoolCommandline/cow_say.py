@@ -18,6 +18,21 @@ class CowsayShell(cmd.Cmd):
             print('Invalid arguments!')
             return
 
+    def do_make_bubble(self, arg):
+        """Wrap the text inside the bubble.\nUSAGE: make_bubble text [width [wrap_text]]"""
+        args = shlex.split(arg)
+        if len(args) == 0 or len(args) >= 4:
+            print('Invalid arguments!')
+            return
+        text = args[0]
+        width = 40
+        wrap_text = True
+        if len(args) >= 2:
+            width = int(args[1])
+        if len(args) == 3:
+            wrap_text = bool(args[2])
+        print(cowsay.make_bubble(text=text, width=width, wrap_text=wrap_text))
+
 
 if __name__ == '__main__':
     CowsayShell().cmdloop()
