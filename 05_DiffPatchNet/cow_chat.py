@@ -36,7 +36,7 @@ async def handle_yield(me: str, message: str) -> tuple[bool, str]:
     return True, ''
 
 
-async def chat(reader, writer):
+async def chat(reader, writer) -> None:
     me = None
     receive = None
     send = asyncio.create_task(reader.readline())
@@ -77,7 +77,9 @@ async def chat(reader, writer):
                         if not yielded_flag:
                             writer.write(f"{response}\n".encode())
                             await writer.drain()
-
+                    case _:
+                        writer.write("Invalid command!\n".encode())
+                        await writer.drain()
                 send = asyncio.create_task(reader.readline())
             elif task is receive:
                 receive = asyncio.create_task(clients[me].get())
@@ -86,7 +88,6 @@ async def chat(reader, writer):
     send.cancel()
     if receive:
         receive.cancel()
-    print(me, "DONE")
     if me:
         del clients[me]
     writer.close()
