@@ -18,13 +18,12 @@ def handle_login(me: str | None, name: str) -> tuple[bool, str]:
 
 async def chat(reader, writer):
     me = None
+    receive = None
     send = asyncio.create_task(reader.readline())
-    while not reader.at_eof():
-        if me is None:
-            done, _ = await asyncio.wait([send], return_when=asyncio.FIRST_COMPLETED)
-        else:
-            done, pending = await asyncio.wait([send, receive], return_when=asyncio.FIRST_COMPLETED)
-
+    quit_flag = False
+    while not reader.at_eof() and not quit_flag:
+        tasks = [send, receive] if receive else [send]
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         for task in done:
             if task is send:
                 input_text = task.result().decode().strip()
@@ -43,13 +42,19 @@ async def chat(reader, writer):
                         available_names = set(cowsay.list_cows()) - set(clients.keys())
                         writer.write(f"Available cow names: {' '.join(available_names)}\n".encode())
                         await writer.drain()
+                    case ['quit']:
+                        writer.write("Farewell!\n".encode())
+                        await writer.drain()
+                        quit_flag = True
+                        break
                 send = asyncio.create_task(reader.readline())
             elif task is receive:
                 receive = asyncio.create_task(clients[me].get())
                 writer.write(f"{task.result()}\n".encode())
                 await writer.drain()
     send.cancel()
-    receive.cancel()
+    if receive:
+        receive.cancel()
     print(me, "DONE")
     if me:
         del clients[me]
