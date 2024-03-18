@@ -5,6 +5,7 @@ import shlex
 
 clients: dict[str, asyncio.Queue] = {}
 
+
 def handle_login(me: str | None, name: str) -> tuple[bool, str]:
     if me is None:
         if name not in cowsay.list_cows():
@@ -23,6 +24,15 @@ async def handle_say(me: str, name: str, message: str) -> tuple[bool, str]:
     if name not in clients:
         return False, 'There is no such user.'
     await clients[name].put(f"{me}: {message}")
+    return True, ''
+
+
+async def handle_yield(me: str, message: str) -> tuple[bool, str]:
+    if not me:
+        return False, 'You need to log in first before writing messages.'
+    for name in clients:
+        if name != me:
+            await clients[name].put(f"{me}: {message}")
     return True, ''
 
 
@@ -60,6 +70,11 @@ async def chat(reader, writer):
                     case ['say', name, message]:
                         sent_flag, response = await handle_say(me, name, message)
                         if not sent_flag:
+                            writer.write(f"{response}\n".encode())
+                            await writer.drain()
+                    case ['yield', message]:
+                        yielded_flag, response = await handle_yield(me, message)
+                        if not yielded_flag:
                             writer.write(f"{response}\n".encode())
                             await writer.drain()
 
