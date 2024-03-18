@@ -36,7 +36,9 @@ async def chat(reader, writer):
                             receive = asyncio.create_task(clients[me].get())
                         writer.write(f"{response}\n".encode())
                         await writer.drain()
-
+                    case['who']:
+                        writer.write(f"Registered users: {' '.join(list(clients.keys()))}\n".encode())
+                        await writer.drain()
                 send = asyncio.create_task(reader.readline())
             elif task is receive:
                 receive = asyncio.create_task(clients[me].get())
