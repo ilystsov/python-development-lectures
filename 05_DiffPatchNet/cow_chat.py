@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import asyncio
 import cowsay
+import shlex
 
 clients: dict[str, asyncio.Queue] = {}
 
@@ -16,6 +17,15 @@ def handle_login(me: str | None, name: str) -> tuple[bool, str]:
         return False, 'You have already been logged in. You have to quit first to log in again.'
 
 
+async def handle_say(me: str, name: str, message: str) -> tuple[bool, str]:
+    if not me:
+        return False, 'You need to log in first before writing messages.'
+    if name not in clients:
+        return False, 'There is no such user.'
+    await clients[name].put(f"{me}: {message}")
+    return True, ''
+
+
 async def chat(reader, writer):
     me = None
     receive = None
@@ -27,7 +37,7 @@ async def chat(reader, writer):
         for task in done:
             if task is send:
                 input_text = task.result().decode().strip()
-                match input_text.split():
+                match shlex.split(input_text):
                     case ['login', name]:
                         logged_in_flag, response = handle_login(me, name)
                         if logged_in_flag:
@@ -47,6 +57,12 @@ async def chat(reader, writer):
                         await writer.drain()
                         quit_flag = True
                         break
+                    case ['say', name, message]:
+                        sent_flag, response = await handle_say(me, name, message)
+                        if not sent_flag:
+                            writer.write(f"{response}\n".encode())
+                            await writer.drain()
+
                 send = asyncio.create_task(reader.readline())
             elif task is receive:
                 receive = asyncio.create_task(clients[me].get())
