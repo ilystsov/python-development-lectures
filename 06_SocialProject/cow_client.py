@@ -54,6 +54,26 @@ class CowClient(cmd.Cmd):
     def do_yield(self, arg):
         self.socket.sendall(f"yield {arg}\n".encode())
 
+    def complete_login(self, text, line, begidx, endidx):
+        self.awaiting_response = True
+        self.do_cows(None)
+        try:
+            response = self.response_queue.get(timeout=2)
+            available_cows = response.replace("Available cow names: ", "").split()
+            return [cow for cow in available_cows if cow.startswith(text)]
+        except queue.Empty:
+            return []
+
+    def complete_say(self, text, line, begidx, endidx):
+        self.awaiting_response = True
+        self.do_who(None)
+        try:
+            response = self.response_queue.get(timeout=2)
+            users = response.replace("Registered users: ", "").split()
+            return [cow for cow in users if cow.startswith(text)]
+        except queue.Empty:
+            return []
+
 
 if __name__ == '__main__':
     host = "127.0.0.1" if len(sys.argv) < 2 else sys.argv[1]
